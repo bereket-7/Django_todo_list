@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView
 from base.models import Task
 
 class TaskList(ListView):
@@ -12,4 +13,10 @@ class TaskDetail(DetailView):
     model = Task
     context_object_name = 'task'
     template_name = 'base/task.html'
+
+class TaskCreate(CreateView):
+    model = Task
+    context_object_name = 'form'
+    template_name = "base/task_form.html"
+
        

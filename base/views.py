@@ -3,7 +3,15 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
-from base.models import Task
+
+
+from django.views import View
+from django.shortcuts import redirect
+from django.db import transaction
+
+from .models import Task
+from .forms import PositionForm
+
 
 class TaskList(ListView):
     model = Task
@@ -22,4 +30,14 @@ class TaskCreate(CreateView):
     context_object_name = 'form'
     template_name = "base/task_form.html"
 
-       
+class TaskReorder(View):
+    def post(self, request):
+        form = PositionForm(request.POST)
+
+        if form.is_valid():
+            positionList = form.cleaned_data["position"].split(',')
+
+            with transaction.atomic():
+                self.request.user.set_task_order(positionList)
+
+        return redirect(reverse_lazy('tasks'))       
